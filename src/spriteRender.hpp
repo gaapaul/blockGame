@@ -10,7 +10,7 @@
 class spriteRender
 {
  public:
-  spriteRender(Shader &shader);
+  spriteRender(Shader &shader, const char *filename);
   ~spriteRender();
 
   void DrawSprite(glm::vec2 position, float degree, glm::vec2 size, glm::vec3 color);

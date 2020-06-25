@@ -39,6 +39,8 @@ glm::vec3 tile::pieceTypeToColor(int pieceType)
   case 10:
     //shadowTetronimo
     return glm::vec3(.8f,.8f,.8f);
+  case 11:
+    return glm::vec3(.4f,.4f,.4f);
   default:
     return glm::vec3(0.0f,0.0f,0.0f);
   }

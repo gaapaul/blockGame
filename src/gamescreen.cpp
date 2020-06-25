@@ -1,6 +1,11 @@
 #include "gamescreen.hpp"
-
+#include <iostream>
 void gamescreen::init() {
+  std::cout << "abc" << std::endl;
+  this->backgroundShader.compile(this->vbShaderSource, this->fbShaderSource);
+  std::cout << "abc" << std::endl;
+  this->backgroundRender = new spriteRender(this->backgroundShader, "background.jpg");
+  this->backgroundTile = new tile(glm::vec2(.1f,-.4f), glm::vec2(.6f, 1.5f), 0,10);
   for (int i = 0; i < this->board_size_x; i++) {
     for (int j = 0; j < this->board_size_y+5; j++) {
       // create vector of tiles in this order.
@@ -23,15 +28,21 @@ void gamescreen::init() {
 }
 
 void gamescreen::draw(spriteRender &gameRender) {
+  this->backgroundTile->tIsRendered = 10;
+  this->backgroundTile->Draw(*this->backgroundRender);
   for (int i = 0; i < this->activeTiles.size(); i++) {
     tile &xtile = activeTiles[i];
     if (xtile.tIsRendered == true) {
-      xtile.Draw(gameRender);
+      xtile.Draw(*this->backgroundRender);
     }
   }
+  std::cout << "here" << std::endl;
+  this->backgroundTile->Draw(*this->backgroundRender);
 }
 
 void gamescreen::drawFromBoardMap(spriteRender &gameRender) {
+  this->backgroundTile->tIsRendered = 11;
+  this->backgroundTile->Draw(*this->backgroundRender);
   int x = 0;
   for (int i = 0; i < this->board_size_x; i++) {
     for (int j = 0; j < this->board_size_y+5; j++) {
@@ -39,6 +50,7 @@ void gamescreen::drawFromBoardMap(spriteRender &gameRender) {
       if (tilemap[i][j] != 0) {
         xtile.tIsRendered = tilemap[i][j];
         xtile.Draw(gameRender);
+        //xtile.Draw(*this->backgroundRender);
       } else {
         xtile.tIsRendered = 0;
         // Don't Draw
@@ -46,4 +58,5 @@ void gamescreen::drawFromBoardMap(spriteRender &gameRender) {
       x++;
     }
   }
+  
 }

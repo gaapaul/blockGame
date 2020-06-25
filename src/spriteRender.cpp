@@ -1,8 +1,8 @@
 #include "spriteRender.hpp"
 #include <iostream>
-spriteRender::spriteRender(Shader &shader) {
+spriteRender::spriteRender(Shader &shader, const char* filename) {
   this->SpriteShader = shader;
-  this->InitSprite();
+  this->InitSprite(filename);
 }
 
 spriteRender::~spriteRender() { glDeleteVertexArrays(1, &this->VAO); }
@@ -23,7 +23,8 @@ void spriteRender::InitSprite(const char* filename) {
     -0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
   -0.5f,  0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f
   };*/
-  int width, height, nrChannels = 3;
+  int width, height, nrChannels;
+  stbi_set_flip_vertically_on_load(true);
   unsigned char *data = stbi_load(filename, &width, &height, &nrChannels, 0);
   unsigned int VBO;
   glGenVertexArrays(1, &this->VAO);

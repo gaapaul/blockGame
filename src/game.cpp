@@ -4,12 +4,14 @@
 #include <chrono>
 #include <time.h>
 void game::initGame(std::chrono::steady_clock::time_point time) {
+  std::cout << "cde" << std::endl;
   this->gameShader.compile(this->vertexShaderSource,
                            this->fragmentShaderSource);
   this->shadowShader.compile(this->vertexShaderSource,
                             this->fragmentShaderSource2);
-  this->ppRender = new spriteRender(this->gameShader, "block");
-  this->psRender = new spriteRender(this->shadowShader,"block");
+  this->ppRender = new spriteRender(this->gameShader, "block.jpg");
+  this->psRender = new spriteRender(this->shadowShader,"block.jpg");
+  std::cout << "efg" << std::endl;
   this->board.init();
   srand(std::chrono::high_resolution_clock::now().time_since_epoch().count());
   this->createBag();

@@ -36,7 +36,7 @@ private:
     "void main()\n"
     "{\n"
     "   gl_Position = transform * vec4(aPos, 0.0f, 1.0f);\n"
-    "TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
+    "   TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
     "}\n\0";
   const char *fragmentShaderSource =
     "#version 330 core\n"
