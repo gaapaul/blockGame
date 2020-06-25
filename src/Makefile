@@ -3,7 +3,7 @@ CPPFLAGS = -g -I./../include/ -I/usr/include/glm/ -I/usr/include/GLFW/
 LDFLAGS = -g
 LDLIBS = -lglfw -lGL -lX11 -lXrandr -lXi -ldl
 
-SRCF = main.cpp shader.cpp spriteRender.cpp tile.cpp gamescreen.cpp gamepiece.cpp game.cpp key.cpp glad.cpp
+SRCF = main.cpp stb_image.cpp shader.cpp spriteRender.cpp tile.cpp gamescreen.cpp gamepiece.cpp game.cpp key.cpp glad.cpp
 OBJS = $(patsubst %.cpp, %.o, $(SRCF))
 
 all: block

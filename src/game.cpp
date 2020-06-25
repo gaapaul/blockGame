@@ -8,8 +8,8 @@ void game::initGame(std::chrono::steady_clock::time_point time) {
                            this->fragmentShaderSource);
   this->shadowShader.compile(this->vertexShaderSource,
                             this->fragmentShaderSource2);
-  this->ppRender = new spriteRender(this->gameShader);
-  this->psRender = new spriteRender(this->shadowShader);
+  this->ppRender = new spriteRender(this->gameShader, "block");
+  this->psRender = new spriteRender(this->shadowShader,"block");
   this->board.init();
   srand(std::chrono::high_resolution_clock::now().time_since_epoch().count());
   this->createBag();
@@ -131,6 +131,7 @@ bool game::checkCollision(gamepiece *piece) {
 
 void game::freezeBlock() {
   int currLineWeight = 0;
+  bool loseFlag = false;
   int lineWeight[this->board.board_size_y] = {0};
     for (int i = this->tetronimo.xPos; i < (this->tetronimo.xPos + 4); i++) {
       for (int j = this->tetronimo.yPos; j < (this->tetronimo.yPos + 4); j++) {
@@ -142,6 +143,9 @@ void game::freezeBlock() {
             .curr_block[j - (int)this->tetronimo.yPos]
             [i - (int)this->tetronimo.xPos]
             .tIsRendered;
+          if(j - (int)this->tetronimo.xPos > 20){
+            loseFlag = true;
+          }
         }
       }
     }
@@ -163,6 +167,9 @@ void game::freezeBlock() {
           }
         }
       }
+    }
+    if(loseFlag){
+      this->initGame(this->prevTime);
     }
     if(positionInBag != 6) {
       this->positionInBag++;
@@ -224,7 +231,7 @@ if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && this->inputKeys[KEY_D]->keyP
     //this->checkCollision();
     if (this->checkCollision(&tetronimo)) {
       this->tetronimo.yPos += 1;
-      this->freezeBlock();
+      //      this->freezeBlock();
     }
   } else if(glfwGetKey(window, GLFW_KEY_S) != GLFW_PRESS){
     this->inputKeys[KEY_S]->keyUnpressed();

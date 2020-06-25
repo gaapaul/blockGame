@@ -30,21 +30,23 @@ private:
   const char *vertexShaderSource =
     "#version 330 core\n"
     "layout (location = 0) in vec2 aPos;\n"
-    "layout (location = 1) in vec3 aColor;\n"
-    "out vec3 outColor;\n"
+    "layout (location = 1) in vec2 aTexCoord;\n"
+    "out vec2 TexCoord;\n"
     "uniform mat4 transform;\n"
     "void main()\n"
     "{\n"
     "   gl_Position = transform * vec4(aPos, 0.0f, 1.0f);\n"
-    "   outColor = aColor;"
+    "TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
     "}\n\0";
   const char *fragmentShaderSource =
     "#version 330 core\n"
+    "in vec2 TexCoord;\n"
     "out vec4 FragColor;\n"
-    "uniform vec3 outColor;"
+    "uniform vec3 outColor;\n"
+    "uniform sampler2D ourTexture;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vec4(outColor, 1.0f);\n"
+    "   FragColor =  texture(ourTexture, TexCoord) * vec4(outColor, 1.0f);\n"
     "}\n\0";
   const char *fragmentShaderSource2 =
     "#version 330 core\n"
