@@ -1,5 +1,12 @@
 #include "gamepiece.hpp"
-
+gamepiece::gamepiece() {
+  this->tileTexture.init("block.jpg");
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) { 
+      this->curr_block[j][i].tTexture = tileTexture;
+    }
+  }
+}
 void gamepiece::draw(spriteRender &renderer) {
   float x;
   float y;

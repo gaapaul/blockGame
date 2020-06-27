@@ -4,20 +4,19 @@
 #include <chrono>
 #include <time.h>
 void game::initGame(std::chrono::steady_clock::time_point time) {
-  std::cout << "cde" << std::endl;
   this->gameShader.compile(this->vertexShaderSource,
                            this->fragmentShaderSource);
   this->shadowShader.compile(this->vertexShaderSource,
                             this->fragmentShaderSource2);
-  this->ppRender = new spriteRender(this->gameShader, "block.jpg");
-  this->psRender = new spriteRender(this->shadowShader,"block.jpg");
-  std::cout << "efg" << std::endl;
+  this->ppRender = new spriteRender(this->gameShader);
+  this->psRender = new spriteRender(this->shadowShader);
   this->board.init();
   srand(std::chrono::high_resolution_clock::now().time_since_epoch().count());
   this->createBag();
-  //std::cout << tetronimoBag[0] << std::endl;
-  this->tetronimo.create(this->tetronimoBag[0],3,16);
-  this->shadowTetronimo.create(this->tetronimoBag[0],3,16);
+  this->tetronimo.create(this->tetronimoBag[0],4,22);
+  this->pieceOnBoard = this->tetronimoBag[0];
+  this->shadowTetronimo.create(this->tetronimoBag[0],4,22);
+  this->textRenderer.init();
   this->nextPiece.create(this->tetronimoBag[1], 10,10);
   this->inputKeys[0] = new key(singular, 1.0); //Q
   this->inputKeys[1] = new key(singular, 1.0); //w
@@ -45,19 +44,55 @@ void game::createBag()
     }
   }
   tmpBag[0] = this->tetronimoBag[0];
-  std::cout << "Bag" << std::endl;
   for(int i=0; i < 7; i++) {
     this->tetronimoBag[i] = tmpBag[i];
-    std::cout << this->tetronimoBag[i] << std::endl;
   }
-  std::cout << "Bag" << std::endl;
 }
 
+float game::calcDropTime() {
+  switch(this->level){
+    case 0:
+      return 0.8;
+    case 1:
+      return 0.716666666666667;
+    case 2: 
+      return 0.633333333333333;
+    case 3: 
+      return 0.55;
+    case 4: 
+      return 0.466666666666667;
+    case 5: 
+      return 0.383333333333333;
+    case 6: 
+      return 0.3;
+    case 7: 
+      return 0.216666666666667;
+    case 8: 
+      return 0.133333333333333;
+    case 9: 
+      return 0.1;
+    default:
+      break;
+    }
+    if(this->level >= 10 || this->level <= 12)
+      return 0.083333333333333;
+    else if(this->level>= 13 || this->level <= 15)
+      return 0.066666666666667;
+    else if(this->level >=16 || this->level <= 18)
+      return 0.05;
+    else if(this->level >= 19 || this->level <= 28)
+      return 0.033333333333333;
+    else
+      return 0.016666666666667;
+}
 void game::runGame(GLFWwindow *window, std::chrono::steady_clock::time_point time) {
   // game_logic_here
   this->keyboardInput(window, time);
   std::chrono::duration<double> diff = time - this->prevTime;
-  if(diff.count() > .75)
+  std::chrono::duration<double> fpsdiff = time - this->fpstime;
+  this->fpstime = time;
+  this->fps = (1.0f/fpsdiff.count() * .7) + (this->fps * .3);
+  if(diff.count() > this->calcDropTime())
   {
     this->prevTime = time;
     this->tetronimo.yPos -= 1;
@@ -76,6 +111,13 @@ void game::runGame(GLFWwindow *window, std::chrono::steady_clock::time_point tim
     }
   }
   this->moveShadowBlock();
+  if(this->visualScore < this->realScore){
+    this->visualScore+=rand() % 10;
+    if(this->visualScore > this->realScore)
+    {
+      this->visualScore = this->realScore;
+    }
+  }
   this->renderGame();
 }
 
@@ -86,6 +128,14 @@ void game::renderGame() {
   this->nextPiece.create(this->tetronimoBag[this->positionInBag + 1], 13, 10);
   this->nextPiece.draw(*this->ppRender);
   this->switchPiece.draw(*this->ppRender);
+  this->textRenderer.renderText(std::to_string(this->fps), glm::vec2(0.0f,0.2f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
+
+  this->textRenderer.renderText(std::to_string(this->visualScore), glm::vec2(-.25f,0.2f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
+  this->textRenderer.renderText("LEVEL", glm::vec2(-.35f,0.0f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
+  this->textRenderer.renderText(std::to_string(this->level), glm::vec2(-0.1f,0.0f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
+  this->textRenderer.renderText("LINES", glm::vec2(-.35f,-0.2f), glm::vec2(0.5,.5), glm::vec3(1.0,0.0,0.0));
+  this->textRenderer.renderText(std::to_string(this->lines), glm::vec2(-0.1f,-0.2f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
+
 }
 
 void game::moveShadowBlock(){
@@ -101,9 +151,9 @@ void game::moveShadowBlock(){
     }
   }
   while(this->checkCollision(&shadowTetronimo) == 0){
-    this->shadowTetronimo.yPos -= 1;
+    this->shadowTetronimo.yPos -= .1;
   }
-  this->shadowTetronimo.yPos += 1;
+  //this->shadowTetronimo.yPos += 1;
 }
 bool game::checkCollision(gamepiece *piece) {
   for (int i = 0; i < 4; i++) {
@@ -133,6 +183,7 @@ bool game::checkCollision(gamepiece *piece) {
 
 void game::freezeBlock() {
   int currLineWeight = 0;
+  int linesCleared = 0;
   bool loseFlag = false;
   int lineWeight[this->board.board_size_y] = {0};
     for (int i = this->tetronimo.xPos; i < (this->tetronimo.xPos + 4); i++) {
@@ -159,10 +210,10 @@ void game::freezeBlock() {
         }
       }
       lineWeight[i] = currLineWeight;
-      std::cout << i << "," << currLineWeight << std::endl;
     }
     for (int k = this->board.board_size_y; k > 0; k--) {
       if (lineWeight[k] == 0) {
+        linesCleared++;
         for (int i = k; i < this->board.board_size_y - 2; i++) {
           for (int j = 1; j < this->board.board_size_x - 1; j++) {
             this->board.tilemap[j][i] = this->board.tilemap[j][i + 1];
@@ -170,24 +221,53 @@ void game::freezeBlock() {
         }
       }
     }
+    this->addScore(linesCleared-1,0);
+    this->lines+=linesCleared-1;
+    this->updateLevel();
     if(loseFlag){
       this->initGame(this->prevTime);
     }
-    if(positionInBag != 6) {
+    if(positionInBag != 5) {
       this->positionInBag++;
       this->tetronimo.create(this->tetronimoBag[positionInBag],3,22);
+      this->pieceOnBoard=this->tetronimoBag[positionInBag];
     } else {
+      this->positionInBag++;
+      this->tetronimo.create(this->tetronimoBag[positionInBag],3,22);
+      this->pieceOnBoard=this->tetronimoBag[positionInBag];
       this->positionInBag = 0;
       this->createBag();
-      this->tetronimo.create(this->tetronimoBag[positionInBag],3,22);
-      positionInBag++;
     }
+
     if(this->tetronimoSwitchState == SWITCH_LOCKED){
       this->tetronimoSwitchState = SWITCH_LOADED;
-      std::cout << "LOADED" << std::endl;
     }
 }
+void game::updateLevel(){
+  //TODO: Update level code
+  this->level = this->lines/10;
+}
+void game::addScore(int linesCleared, int dropLines) {
+  switch (linesCleared){
+    case 1:
+      this->realScore+=40;
+      break;
+    case 2:
+      this->realScore+=100;
+      break;
+    case 3:
+      this->realScore+=300;
+      break;
+    case 4:
+      this->realScore+=1200;
+      break;
+    default:
+      break;
+  }
+  this->realScore+=dropLines;
+}
 int game::keyboardInput(GLFWwindow *window, std::chrono::steady_clock::time_point time) {
+  int tmp;
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
   // move playerboard
@@ -240,11 +320,14 @@ if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && this->inputKeys[KEY_D]->keyP
  }
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && this->inputKeys[KEY_SPACE]->keyPressed(time)) {
     //this->checkCollision();
+    int score = 0;
     while(this->checkCollision(&tetronimo) == 0){
       this->tetronimo.yPos -= 1;
+      score++;
       //this->checkCollision();
     }
     this->tetronimo.yPos += 1;
+    this->addScore(0,score);
     this->freezeBlock();
   } else if(glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_PRESS){
     this->inputKeys[KEY_SPACE]->keyUnpressed();
@@ -258,23 +341,26 @@ if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && this->inputKeys[KEY_D]->keyP
   if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS && this->inputKeys[KEY_E]->keyPressed(time)) {
     if(this->tetronimoSwitchState == SWITCH_UNLOADED){
       if(positionInBag != 6) {
-        this->switchPiece.create(this->tetronimoBag[positionInBag],-5,10);
-        this->switchType = this->tetronimoBag[positionInBag];
+        this->switchPiece.create(this->pieceOnBoard,-5,10);
+        this->switchType = this->pieceOnBoard;
         this->positionInBag++;
-        this->tetronimo.create(this->tetronimoBag[positionInBag],3,16);
+        this->tetronimo.create(this->tetronimoBag[positionInBag],4,22);
+        this->pieceOnBoard=this->tetronimoBag[positionInBag];
       } else {
-        this->switchPiece.create(this->tetronimoBag[positionInBag],-5,10);
-        this->switchType = this->tetronimoBag[positionInBag];
+        this->switchPiece.create(this->pieceOnBoard,-5,10);
+        this->switchType = this->pieceOnBoard;
         this->tetronimoBag[this->positionInBag] = 0;
         this->createBag();
         this->tetronimo.create(this->tetronimoBag[positionInBag],3,16);
+        this->pieceOnBoard=this->tetronimoBag[positionInBag];
         this->positionInBag++;
       }
     } else if(this->tetronimoSwitchState == SWITCH_LOADED) {
-        this->switchPiece.create(this->tetronimoBag[positionInBag],-5,10);
-        this->tetronimo.create(this->switchType,3,16);
-        this->switchType = this->tetronimoBag[positionInBag];
-        std::cout << "From Loaded" << this->switchType << std::endl;
+        this->switchPiece.create(this->pieceOnBoard,-5,10);
+        this->tetronimo.create(this->switchType,4,22);
+        tmp = this->pieceOnBoard;
+        this->pieceOnBoard=this->switchType;
+        this->switchType = tmp;
     }
     this->tetronimoSwitchState = SWITCH_LOCKED;
   } else if(glfwGetKey(window, GLFW_KEY_E) != GLFW_PRESS){

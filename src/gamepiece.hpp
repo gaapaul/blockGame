@@ -6,6 +6,7 @@
 class gamepiece
 {
 private:
+  texture tileTexture;
   glm::vec2 GPSize = glm::vec2(1.0f/20, 1.0f/20);
   int tetronimo[7][4][4] = { 
                            {{0,0,1,1},
@@ -37,6 +38,7 @@ private:
                            {0,7,0,0},
                            {0,7,0,0}}};
 public:
+  gamepiece();
   void draw(spriteRender &renderer);
   void create(int Type, int xPos, int yPos);
    void rotatePieceCcw();

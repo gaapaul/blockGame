@@ -1,6 +1,7 @@
 #include "gamepiece.hpp"
 #include "gamescreen.hpp"
 #include "shader.hpp"
+#include "renderText.hpp"
 #include "spriteRender.hpp"
 #include "key.hpp"
 #include <chrono>
@@ -56,6 +57,11 @@ private:
     "{\n"
     "   FragColor = vec4(outColor, 0.0f);\n"
     "}\n\0";
+  int realScore = 0;
+  int visualScore = 0;
+  int level=10;
+  int lines=100;
+  int pieceOnBoard = 0;
   bool gameStatus;
   gamepiece tetronimo;
   gamepiece shadowTetronimo;
@@ -65,14 +71,20 @@ private:
   key *inputKeys[7];
   Shader gameShader;
   Shader shadowShader;
+  textRender textRenderer;
   double freezeBlockTime = 1;
   int maxRotateBeforeFreeze = 3;
   int tetronimoBag[7] = {1,2,3,4,5,6,7};
-  int positionInBag = 0;
+  int positionInBag = 1;
   switchStates tetronimoSwitchState = SWITCH_UNLOADED;
   int switchType;
+  int fps;
   std::chrono::steady_clock::time_point prevTime;
+  std::chrono::steady_clock::time_point fpstime;
   std::chrono::steady_clock::time_point freezeTime;
+  void addScore(int linesCleared, int dropLines);
+  void updateLevel();
+  float calcDropTime();
 public:
   void initGame(std::chrono::steady_clock::time_point);
   void freezeBlock();

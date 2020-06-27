@@ -10,7 +10,9 @@ class gamescreen
 {
 private:
   glm::vec2 tileSize = glm::vec2(0.05f, 0.05f);
-  spriteRender *backgroundRender;
+  texture backgroundTexture;
+  texture tileTexture;
+  texture tileTextureBorder;
   const char *vbShaderSource =
     "#version 330 core\n"
     "layout (location = 0) in vec2 aPos;\n"

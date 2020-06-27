@@ -68,6 +68,7 @@ int main() {
   }
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+  glfwSwapInterval(1);
 
   // glad: load all OpenGL function pointers
   // ---------------------------------------
@@ -79,34 +80,9 @@ int main() {
   tgame.initGame(std::chrono::steady_clock::now());
   unsigned int microseconds = 100000;
   while (!glfwWindowShouldClose(window)) {
-    //usleep(microseconds);
-    // tgame.checkCollision();
-    //tgame.keyboardInput(window, std::chrono::steady_clock::now());
-    
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    //tgame.renderGame();
     tgame.runGame(window, std::chrono::steady_clock::now());
-    // tetgame.drawFromBoardMap(sRender);
-
-    // block.draw(pRender);
-    // tile2.tPosition = glm::vec2(x,y);
-    /*for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4; j++) {
-        tile &xtile = activeTiles[i];
-        glm::vec2 pos = xtile.tPosition;
-        x_i = pos.x;
-        y_i = pos.y;
-        x_i += .01 * (float)y;
-        y_i += .01 * (float)x;
-
-        std::cout << x_i << std::endl;
-
-        xtile.tPosition = glm::vec2(x_i, y_i);
-        // xtile.tRotation = r + x * 1000;
-        xtile.Draw(sRender);
-      }
-    }*/
     glfwSwapBuffers(window);
     glfwPollEvents();
   }

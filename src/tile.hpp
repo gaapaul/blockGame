@@ -1,6 +1,7 @@
 #ifndef TILE_HPP
 #define TILE_HPP
 #include "spriteRender.hpp"
+#include "texture.hpp"
 #include <glm.hpp>
 
 class tile
@@ -18,8 +19,9 @@ public:
   glm::vec2 tPosition, tSize;
   float tRotation;
   int tIsRendered;
+  texture tTexture;
   tile();
-  tile(glm::vec2 pos, glm::vec2 size, float rotation, int renderType);
+  tile(texture spriteTexture, glm::vec2 pos, glm::vec2 size, float rotation, int renderType);
   void Draw(spriteRender &renderer);
 };
 

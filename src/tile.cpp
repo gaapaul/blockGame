@@ -5,12 +5,12 @@ tile::tile()
       tRotation(0.0f), tIsRendered(false) {
 }
 
-tile::tile(glm::vec2 pos, glm::vec2 size, float rotation, int renderType)
-  : tPosition(pos), tSize(size), tRotation(rotation),
+tile::tile(texture spriteTexture,glm::vec2 pos, glm::vec2 size, float rotation, int renderType)
+  :tTexture(spriteTexture), tPosition(pos), tSize(size), tRotation(rotation),
       tIsRendered(renderType) {}
 
 void tile::Draw(spriteRender &renderer) {
-  renderer.DrawSprite(this->tPosition, this->tRotation, this->tSize, pieceTypeToColor(this->tIsRendered));
+  renderer.DrawSprite(this->tTexture, this->tPosition, this->tRotation, this->tSize, pieceTypeToColor(this->tIsRendered));
 }
 
 glm::vec3 tile::pieceTypeToColor(int pieceType)

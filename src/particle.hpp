@@ -6,19 +6,18 @@
 #include <gtc/type_ptr.hpp>
 #include "stb_image.hpp"
 #include "shader.hpp"
-#include "texture.hpp"
 
 class spriteRender
 {
  public:
-  spriteRender(Shader &shader);
+  spriteRender(Shader &shader, const char *filename);
   ~spriteRender();
 
-  void DrawSprite(texture &renderTexture, glm::vec2 position, float degree, glm::vec2 size, glm::vec3 color);
+  void DrawSprite(glm::vec2 position, float degree, glm::vec2 size, glm::vec3 color);
  private:
-  void InitSprite();
+  void InitSprite(const char* filename);
   unsigned int VAO;
-  //unsigned int texture;
+  unsigned int texture;
   Shader SpriteShader;
 };
 #endif

@@ -10,7 +10,6 @@ bool key::keyPressed(std::chrono::steady_clock::time_point time) {
     if (this->pressed) {
       // if is currently pressed
       std::chrono::duration<double> diff = time - inputTime;
-      std::cout << "time: " << diff.count() << " : " << (this->continuousRepeatCount>>2)+1 << "  :  " << this->inputDeadTime /( (this->continuousRepeatCount>>2)+1) << std::endl;
       if (diff.count() > this->inputDeadTime / ((this->continuousRepeatCount>>2)+1)) {
         if(this->continuousRepeatCount <= 3){
           this->continuousRepeatCount++;
