@@ -4,6 +4,7 @@
 #include "renderText.hpp"
 #include "spriteRender.hpp"
 #include "key.hpp"
+#include "particle.hpp"
 #include <chrono>
 #include <glfw3.h>
 
@@ -68,6 +69,7 @@ private:
   gamepiece nextPiece;
   gamepiece switchPiece;
   gamescreen board;
+  particleGen particleGenerator;
   key *inputKeys[7];
   Shader gameShader;
   Shader shadowShader;

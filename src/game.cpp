@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <chrono>
 #include <time.h>
+#include <vector>
 void game::initGame(std::chrono::steady_clock::time_point time) {
   this->gameShader.compile(this->vertexShaderSource,
                            this->fragmentShaderSource);
@@ -17,6 +18,7 @@ void game::initGame(std::chrono::steady_clock::time_point time) {
   this->pieceOnBoard = this->tetronimoBag[0];
   this->shadowTetronimo.create(this->tetronimoBag[0],4,22);
   this->textRenderer.init();
+  this->particleGenerator.init(1);
   this->nextPiece.create(this->tetronimoBag[1], 10,10);
   this->inputKeys[0] = new key(singular, 1.0); //Q
   this->inputKeys[1] = new key(singular, 1.0); //w
@@ -126,16 +128,17 @@ void game::renderGame() {
   this->shadowTetronimo.draw(*this->psRender);
   this->tetronimo.draw(*this->ppRender);
   this->nextPiece.create(this->tetronimoBag[this->positionInBag + 1], 13, 10);
+  std::cout << "NEXT: " <<  this->tetronimoBag[this->positionInBag + 1] << std::endl;
   this->nextPiece.draw(*this->ppRender);
   this->switchPiece.draw(*this->ppRender);
+  this->particleGenerator.updateParticles();
+  this->particleGenerator.draw(*this->ppRender);
   this->textRenderer.renderText(std::to_string(this->fps), glm::vec2(0.0f,0.2f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
-
   this->textRenderer.renderText(std::to_string(this->visualScore), glm::vec2(-.25f,0.2f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
   this->textRenderer.renderText("LEVEL", glm::vec2(-.35f,0.0f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
   this->textRenderer.renderText(std::to_string(this->level), glm::vec2(-0.1f,0.0f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
   this->textRenderer.renderText("LINES", glm::vec2(-.35f,-0.2f), glm::vec2(0.5,.5), glm::vec3(1.0,0.0,0.0));
   this->textRenderer.renderText(std::to_string(this->lines), glm::vec2(-0.1f,-0.2f), glm::vec2(.5,.5), glm::vec3(1.0,0.0,0.0));
-
 }
 
 void game::moveShadowBlock(){
@@ -202,7 +205,7 @@ void game::freezeBlock() {
         }
       }
     }
-    for (int i = 1; i < this->board.board_size_y - 1; i++) {
+    for (int i = 1; i < this->board.board_size_y; i++) {
       currLineWeight = 0; // set so
       for (int j = 1; j < this->board.board_size_x - 1; j++) {
         if (this->board.tilemap[j][i] == 0) {
@@ -210,10 +213,18 @@ void game::freezeBlock() {
         }
       }
       lineWeight[i] = currLineWeight;
-    }
+    }  
+    for (int k = this->board.board_size_y; k > 0; k--) {
+      if (lineWeight[k] == 0) {
+      for (int j = 1; j < this->board.board_size_x - 1; j++) {
+          particleGenerator.createParticles(k,j, this->board.tilemap[j][k]);
+        }
+      } 
+    }      
     for (int k = this->board.board_size_y; k > 0; k--) {
       if (lineWeight[k] == 0) {
         linesCleared++;
+        std::cout << "lines Cleared: " << linesCleared << " K " << k << std::endl;
         for (int i = k; i < this->board.board_size_y - 2; i++) {
           for (int j = 1; j < this->board.board_size_x - 1; j++) {
             this->board.tilemap[j][i] = this->board.tilemap[j][i + 1];
@@ -221,8 +232,9 @@ void game::freezeBlock() {
         }
       }
     }
-    this->addScore(linesCleared-1,0);
-    this->lines+=linesCleared-1;
+
+    this->addScore(linesCleared,0);
+    this->lines+=linesCleared;
     this->updateLevel();
     if(loseFlag){
       this->initGame(this->prevTime);

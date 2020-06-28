@@ -6,7 +6,7 @@ void gamescreen::init() {
   this->tileTextureBorder.init("blockBorder.jpg");
   this->tileTexture.init("blockStuck.jpg");
 
-  this->backgroundTile = new tile(backgroundTexture,glm::vec2(-1.0f,-1.0f), glm::vec2(2.0f, 2.0f), 0,10);
+  this->backgroundTile = new tile(backgroundTexture,glm::vec2(0.0f,0.0f), glm::vec2(2.0f, 2.0f), 0,10);
   
   for (int i = 0; i < this->board_size_x; i++) {
     for (int j = 0; j < this->board_size_y+5; j++) {
