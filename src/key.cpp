@@ -10,8 +10,9 @@ bool key::keyPressed(std::chrono::steady_clock::time_point time) {
     if (this->pressed) {
       // if is currently pressed
       std::chrono::duration<double> diff = time - inputTime;
-      if (diff.count() > this->inputDeadTime / ((this->continuousRepeatCount>>2)+1)) {
-        if(this->continuousRepeatCount <= 3){
+      if (diff.count() >
+          this->inputDeadTime / ((this->continuousRepeatCount >> 2) + 1)) {
+        if (this->continuousRepeatCount <= 3) {
           this->continuousRepeatCount++;
         }
         return true;
@@ -29,16 +30,14 @@ bool key::keyPressed(std::chrono::steady_clock::time_point time) {
       this->pressed = true;
       return true;
     } else {
-      //this->pressed = false;
+      // this->pressed = false;
       return false;
-
     }
   }
 }
 
-void key::keyUnpressed()
-{
+void key::keyUnpressed() {
   this->pressed = false;
-  this->continuousRepeatCount = 0; 
+  this->continuousRepeatCount = 0;
 }
 #endif KEY_HPP

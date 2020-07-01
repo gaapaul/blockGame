@@ -6,22 +6,25 @@ void gamescreen::init() {
   this->tileTextureBorder.init("blockBorder.jpg");
   this->tileTexture.init("blockStuck.jpg");
 
-  this->backgroundTile = new tile(backgroundTexture,glm::vec2(0.0f,0.0f), glm::vec2(2.0f, 2.0f), 0,10);
-  
+  this->backgroundTile = new tile(backgroundTexture, glm::vec2(0.0f, 0.0f),
+                                  glm::vec2(2.0f, 2.0f), 0, 10);
+
   for (int i = 0; i < this->board_size_x; i++) {
-    for (int j = 0; j < this->board_size_y+5; j++) {
+    for (int j = 0; j < this->board_size_y + 5; j++) {
       // create vector of tiles in this order.
-      if (i == 0 || j == 0 || i == board_size_x - 1 || j > board_size_y-1) {
+      if (i == 0 || j == 0 || i == board_size_x - 1 || j > board_size_y - 1) {
         tilemap[i][j] = 10;
         this->activeTiles.push_back(
-            tile(tileTextureBorder,glm::vec2((float)i / 20 + this->board_offset_x,
+            tile(tileTextureBorder,
+                 glm::vec2((float)i / 20 + this->board_offset_x,
                            (float)j / 20 + this->board_offset_y),
                  this->tileSize, 0, 8));
 
       } else {
         tilemap[i][j] = 0;
         this->activeTiles.push_back(
-            tile(tileTexture,glm::vec2((float)i / 20 + this->board_offset_x,
+            tile(tileTexture,
+                 glm::vec2((float)i / 20 + this->board_offset_x,
                            (float)j / 20 + this->board_offset_y),
                  this->tileSize, 0, 0));
       }
@@ -46,7 +49,7 @@ void gamescreen::drawFromBoardMap(spriteRender &gameRender) {
   this->backgroundTile->Draw(gameRender);
   int x = 0;
   for (int i = 0; i < this->board_size_x; i++) {
-    for (int j = 0; j < this->board_size_y+5; j++) {
+    for (int j = 0; j < this->board_size_y + 5; j++) {
       tile &xtile = activeTiles[x];
       if (tilemap[i][j] != 0) {
         xtile.tIsRendered = tilemap[i][j];
@@ -58,5 +61,4 @@ void gamescreen::drawFromBoardMap(spriteRender &gameRender) {
       x++;
     }
   }
-  
 }

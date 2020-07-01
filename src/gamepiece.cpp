@@ -2,7 +2,7 @@
 gamepiece::gamepiece() {
   this->tileTexture.init("block.jpg");
   for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) { 
+    for (int j = 0; j < 4; j++) {
       this->curr_block[j][i].tTexture = tileTexture;
     }
   }
@@ -28,18 +28,18 @@ void gamepiece::draw(spriteRender &renderer) {
 
 void gamepiece::create(int Type, int xPos, int yPos) {
   this->pieceType = Type;
-  //if (this->pieceType == 6) {
+  // if (this->pieceType == 6) {
   //  this->xPos = 5;
   //} else {
-    //this->xPos = 3;
-    this->xPos = xPos;
-    //}
-  //this->yPos = 20-4;
+  // this->xPos = 3;
+  this->xPos = xPos;
+  //}
+  // this->yPos = 20-4;
   this->yPos = yPos;
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       this->curr_block[i][j].tSize = this->GPSize;
-      if (this->tetronimo[(this->pieceType)-1][i][j] > 0) {
+      if (this->tetronimo[(this->pieceType) - 1][i][j] > 0) {
         this->curr_block[i][j].tIsRendered = Type;
       } else {
         this->curr_block[i][j].tIsRendered = 0;

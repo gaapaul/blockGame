@@ -8,14 +8,34 @@ spriteRender::spriteRender(Shader &shader) {
 spriteRender::~spriteRender() { glDeleteVertexArrays(1, &this->VAO); }
 void spriteRender::InitSprite() {
 
-  GLfloat verts[] = {// positions          // texture coords
-                     -.5, .5f,0.0f,1.0f,
-                     .5f, -.5f,1.0f,0.0f,
-                     -.5f, -.5f,0.0f,0.0f,
-                     //other triangle
-                     -.5f,.5f,0.0f,1.0f,
-                     .5f,.5f,1.0f,1.0f,
-                     .5f, -.5f,1.0f,0.0f,};
+  GLfloat verts[] = {
+      // positions          // texture coords
+      -.5,
+      .5f,
+      0.0f,
+      1.0f,
+      .5f,
+      -.5f,
+      1.0f,
+      0.0f,
+      -.5f,
+      -.5f,
+      0.0f,
+      0.0f,
+      // other triangle
+      -.5f,
+      .5f,
+      0.0f,
+      1.0f,
+      .5f,
+      .5f,
+      1.0f,
+      1.0f,
+      .5f,
+      -.5f,
+      1.0f,
+      0.0f,
+  };
 
   int width, height, nrChannels;
   unsigned int VBO;
@@ -27,19 +47,20 @@ void spriteRender::InitSprite() {
 
   // first index location of 0, vertex attributes are composed of 2 values, size
   // of float, space between attributes is 2 * sizeof a float, offset is 0
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void *)0);
-  glEnableVertexAttribArray(0);// for vertex
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                        (void *)0);
+  glEnableVertexAttribArray(0); // for vertex
 
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2*sizeof(GLfloat)));
-  glEnableVertexAttribArray(1); //for texture
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                        (void *)(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(1); // for texture
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
-
 }
 
-void spriteRender::DrawSprite(texture &renderTexture, glm::vec2 position, float degree, glm::vec2 size,
-                              glm::vec3 color) {
+void spriteRender::DrawSprite(texture &renderTexture, glm::vec2 position,
+                              float degree, glm::vec2 size, glm::vec3 color) {
   this->SpriteShader.Use();
 
   glm::mat4 transform = glm::mat4(1.0f);
@@ -54,6 +75,6 @@ void spriteRender::DrawSprite(texture &renderTexture, glm::vec2 position, float 
   glActiveTexture(GL_TEXTURE0);
   renderTexture.bind();
   glBindVertexArray(this->VAO);
-  glDrawArrays(GL_TRIANGLES, 0,6);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
   glBindVertexArray(0);
 }

@@ -4,6 +4,7 @@
 #include "gamescreen.hpp"
 #include "shader.hpp"
 #include "spriteRender.hpp"
+#include <chrono>
 #include <glad/glad.h>
 #include <glfw3.h>
 #include <glm.hpp>
@@ -12,7 +13,6 @@
 #include <iostream>
 #include <unistd.h>
 #include <vector>
-#include <chrono>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 int processInput(GLFWwindow *window);
